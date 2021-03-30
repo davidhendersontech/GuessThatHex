@@ -1,45 +1,23 @@
+body {
+    background-color: bisque;
+}
+
 .color-boxes-container {
     outline: red solid 10px;
     display: grid;
-    grid-template-columns: 33% 33% 33%;
+    grid-template-columns: 33.333% 33.333% 33.333%;
     grid-template-rows: 50% 50%;
 }
 
+.box {
+    margin: 20px 20px 20px 20px;
+    padding:20px 20px 20px 20px;
+    border-radius: 12px;
+    height: 30vh;
+    border: 1px solid;
+}
 
-
-.box1 {
-   background-color: aqua;
-   grid-row-start: 1;
-   grid-column-start: 1;
-   grid-column-end: 2;
-}
-.box2 {
-    background-color: blueviolet;
-    grid-row-start: 1;
-    grid-column-start: 2;
-    grid-column-end: 3;
-}
-.box3 {
-    grid-column-start: 3;
-    grid-column-end: 4;  
-    grid-row-start: 1;
-    background-color: coral;
-}
-.box4 {
-    grid-column-start: 1;
-    grid-column-end: 2;
-    grid-row-start: 2;
-    background-color: mediumorchid;
-}
-.box5 {
-    grid-column-start: 2;
-    grid-column-end: 3;
-    grid-row-start: 2;
-    background-color: tomato;
-}
-.box6 {
-    grid-column-start: 3;
-    grid-column-end: 4;
-    grid-row-start: 2;
-    background-color: saddlebrown;
+.box p {
+    color: #fff;
+    text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
 }
