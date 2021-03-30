@@ -1,8 +1,12 @@
-const colorVal = document.querySelector('.color')
+
 
 createColorBoxes(6);
 pickWinner(6);
+
 function createColorBoxes(intBoxes){
+
+    //create
+    const colorVal = document.querySelector('.color')
     let counter = 1;
     const boxDivs = document.querySelector('.color-boxes-container')
     const colorCards = [];
@@ -14,14 +18,16 @@ function createColorBoxes(intBoxes){
         card.classList.add('box');
         const backgroundColor = createRandomHex();
         card.style.backgroundColor = `#${backgroundColor}`;
+        
         p.textContent = `color : ${backgroundColor}`
         card.appendChild(p);
         colorCards.push(card)
     }
-    console.log(winningID);
+    console.log(winningID)
     colorCards.forEach(card => {
-       
-        if(winningID === parseInt(card.id)){
+        //add event listeners
+        if(winningID === parseInt(card.id)){ 
+            colorVal.textContent = `GUESS THE COLOR :${rgbToHex(cleanRGB(card.style.backgroundColor))}`
             card.addEventListener('click', e => {
                 alert('YOU WON!')
             })
@@ -31,6 +37,7 @@ function createColorBoxes(intBoxes){
             } )
         }
 
+        //append
         if (counter <= (colorCards.length / 2)){
             // first row
             card.style.gridRowStart = '1';
@@ -46,13 +53,7 @@ function createColorBoxes(intBoxes){
         }
         counter += 1;
     })
-
-
-
-
-
 }
-
 function createRandomHex(){
     // color range in decimal : 0 - 16777215                    (Math.random()*16777215)
     //                            white - black
@@ -62,8 +63,23 @@ function createRandomHex(){
     let randomHexColor = Math.floor(Math.random()*16777215).toString(16)
     return randomHexColor;
 }
-
 function pickWinner(intBoxes){
     const winningID = Math.floor(Math.random() * 6);
     return ((winningID > 1) ? winningID: winningID + 1)
+}
+
+function toHex(color){
+    var hex = color.toString(16);
+    return hex.length === 1 ? "0"+ hex: hex;
+}
+
+function rgbToHex(numberArray){
+    return "#" + toHex(parseInt(numberArray[0])) + toHex(parseInt(numberArray[1])) + toHex(parseInt(numberArray[2]))
+}
+function cleanRGB(string){
+    var pos1 = string.indexOf('\(');
+    var pos2 = string.indexOf('\)');
+    string = string.slice(pos1+1,pos2)
+    var nums = string.split(',');
+    return nums;
 }
