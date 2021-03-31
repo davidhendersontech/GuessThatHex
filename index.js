@@ -1,7 +1,16 @@
+const playerURL = 'http://localhost:3000/players'
+const initialsForm = document.querySelector('#form')
+createColorBoxes(9);
+winning('matt');
+
+initialsForm.addEventListener('submit',e => {
+    e.preventDefault();
+    
+    const formData = new FormData(initialsForm);
+    logIn(formData)
+})
 
 
-createColorBoxes(6);
-pickWinner(6);
 
 function createColorBoxes(intBoxes){
 
@@ -13,21 +22,16 @@ function createColorBoxes(intBoxes){
     const winningID = pickWinner(intBoxes);
     for(let i = 1; i <= intBoxes; i++){
         const card = document.createElement('div');
-        const p = document.createElement('p');
         card.id = i;
         card.classList.add('box');
         const backgroundColor = createRandomHex();
         card.style.backgroundColor = `#${backgroundColor}`;
-        
-        p.textContent = `color : ${backgroundColor}`
-        card.appendChild(p);
         colorCards.push(card)
     }
-    console.log(winningID)
     colorCards.forEach(card => {
         //add event listeners
         if(winningID === parseInt(card.id)){ 
-            colorVal.textContent = `GUESS THE COLOR :${rgbToHex(cleanRGB(card.style.backgroundColor))}`
+            colorVal.textContent = `Guess that HEX! : ${rgbToHex(cleanRGB(card.style.backgroundColor))}`
             card.addEventListener('click', e => {
                 alert('YOU WON!')
             })
@@ -38,17 +42,23 @@ function createColorBoxes(intBoxes){
         }
 
         //append
-        if (counter <= (colorCards.length / 2)){
+        if (counter <= (colorCards.length / 3)){
             // first row
             card.style.gridRowStart = '1';
             card.style.gridColumnStart = counter;
             card.style.gridColumnEnd = ( counter + 1); 
             boxDivs.append(card);
-        } else {
+        } else if ((counter > (colorCards.length / 3) && (counter <= (colorCards.length) - (colorCards.length / 3)))){
             // second row
             card.style.gridRowStart = '2';
-            card.style.gridColumnStart = (counter - (colorCards.length / 2));
-            card.style.gridColumnEnd = (counter - ((colorCards.length / 2)- 1));
+            card.style.gridColumnStart = (counter - (colorCards.length / 3));
+            card.style.gridColumnEnd = (counter - ((colorCards.length / 3)- 1));
+            boxDivs.append(card);
+        } else {
+            
+            card.style.gridRowStart = '3';
+            card.style.gridColumnStart = (counter - (colorCards.length / 3)-3);
+            card.style.gridColumnEnd = (counter - ((colorCards.length / 3)- 1)-3);
             boxDivs.append(card);
         }
         counter += 1;
@@ -82,4 +92,45 @@ function cleanRGB(string){
     string = string.slice(pos1+1,pos2)
     var nums = string.split(',');
     return nums;
+}
+
+function winning(user){
+    fetch(playerURL)
+        .then(response => response.json())
+        .then(e => {
+        })
+}
+
+function logIn(form){
+    
+    const initials = form.get('initials')
+    fetch(playerURL)
+        .then(response => response.json())
+        .then(json => {
+            
+            const playerDoesExist = playerExists(initials,json)
+            console.log(playerDoesExist)
+            // if(playerExists(initials,json)[0]){
+            //     //fetch call
+            //     const highscoreElement = document.querySelector('.highscore');
+
+            // } else {
+            //     //fetch post
+            // }
+        })
+
+    
+}
+
+function playerExists(initials, json){
+    const players = Object.values(json)
+    players.forEach(player => {
+        if( initials === player['initials']){
+            const idOfPlayer = player['id']
+            return [true,idOfPlayer];
+        } else {
+            return false;
+        }
+        
+    })
 }

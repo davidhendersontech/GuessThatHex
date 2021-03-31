@@ -1,0 +1,14 @@
+{
+   "players": [
+       {
+           "initials": "MCB",
+           "highscore": 0,
+           "id" : 0
+       },
+       {
+           "initials": "MER",
+            "highscore": 69,
+            "id": 1
+       }
+   ]
+}

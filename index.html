@@ -7,10 +7,18 @@
     <script src="index.js" defer></script>
     <link rel="stylesheet" href='base.css'/>
     <link rel="shortcut icon" href="favicon.ico">
-    <title>Guess the Colors!</title>
+    <title>Guess that Hex!</title>
 </head>
 <body>
-    <h1 class='color'>GUESS THE COLORS!</h1>
+    <nav id='navbar'>
+        <h1 class='color'>GUESS THE COLORS!</h1>
+        <h2 class='highscore'>Highscore: </h2>
+        <form id='form'>
+            <input type="text" for='initials' name='initials' placeholder="Enter your initials" maxlength="3">
+            <button type="submit" > Login </button>
+        </form>
+    </nav>
+    
     <div class="color-boxes-container">
     </div>
     
