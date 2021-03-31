@@ -101,36 +101,82 @@ function winning(user){
         })
 }
 
+// async function getPlayersInfo() {
+//     var response = await fetch(playerURL);
+  
+//     console.log(response.json()); // this line will "wait" for the previous to be completed
+    
+//   }
+
+ getPlayersInfo() ;
+
 function logIn(form){
     
-    const initials = form.get('initials')
+    let initials = form.get('initials').toUpperCase();
+    let playerInfo = 0;
     fetch(playerURL)
         .then(response => response.json())
-        .then(json => {
-            
-            const playerDoesExist = playerExists(initials,json)
-            console.log(playerDoesExist)
-            // if(playerExists(initials,json)[0]){
-            //     //fetch call
-            //     const highscoreElement = document.querySelector('.highscore');
-
-            // } else {
-            //     //fetch post
-            // }
+        .then(e => {
+            playerInfo = e;
         })
+    console.log(playerInfo)
+
+    // fetch(playerURL)
+    //     .then(response => response.json())
+    //     .then(json => {
+    //         const player = findPlayer(initials,json)
+    //         if(player[0]){
+    //             //fetch call
+    //             const highscoreElement = document.querySelector('.highscore');
+    //             highscoreElement.textContent = `Highscore: ${json[player[1]]['highscore']}`
+    //         } else {
+    //             const playerJSON = {
+    //                 'initials' : player[1],
+    //                 'highscore': 0,
+    //                 'id': player[0]
+    //             }    
+    //             return playerJSON;
+    //         }
+    //     })
+    
+ 
+
+
+
+    
+    // } else {
+            //     player.shift() //get rid of false value \ don't want that in the db
+            //     const playerJSON = {
+            //         'initials' : player[1],
+            //         'highscore': 0,
+            //         'id': player[0]
+            //     }
+
+            //     console.log(JSON.stringifyplayerJSON)
+            //     const options = {
+            //         METHOD: 'patch',
+            //         HEADERS: {
+            //             "Content-Type" : "application/json",
+            //             "Accept"       : "application/json"
+            //         },
+            //         BODY: JSON.stringify(playerJSON)
+            //     }
+            //     fetch(playerURL,options)
 
     
 }
 
-function playerExists(initials, json){
+function findPlayer(initials, json){
     const players = Object.values(json)
-    players.forEach(player => {
-        if( initials === player['initials']){
-            const idOfPlayer = player['id']
-            return [true,idOfPlayer];
-        } else {
-            return false;
+    let playerFound = false;
+    let playerId = 0
+    for(let i=0; i < players.length; i++){
+        if (initials === players[i]['initials']){
+            playerFound = true;
+            playerId = i;
+            break;
         }
-        
-    })
+        playerId = i+1;
+    }
+    return [playerFound,playerId,initials];
 }
