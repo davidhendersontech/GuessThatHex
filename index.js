@@ -1,25 +1,76 @@
 const playerURL = 'http://localhost:3000/players'
 const initialsForm = document.querySelector('#form')
-createColorBoxes(9);
-winning('matt');
+const highscore = document.querySelector('.highscore');
+const playerInitialsElement = document.querySelector('.playerInitials')
+const streakElement = document.querySelector('.currentStreak');
+const boxDivs = document.querySelector('.color-boxes-container')
+let currentPlayer = null;
+let playerLoggedIn = false;
+// createColorBoxes(9);
+createGame();
 
 initialsForm.addEventListener('submit',e => {
     e.preventDefault();
-    
+    playerLoggedIn = true;
+    streakElement.textContent = `Current streak: 0`;
     const formData = new FormData(initialsForm);
     logIn(formData)
+    createGame()
 })
 
+function createGame(){
+    let streak = 0;
+    if (!playerLoggedIn){
+        playerInitialsElement.textContent = "PLEASE LOG IN BELOW TO START";
+        createColorBoxes(9,false)
+    } else {
+        clearGrid()
+        createColorBoxes(9,true)
+        
+    }
+}
+function streakUp(streak){
+    alert('NICE JOB')
+    streak += 1;
+    nextRound(streak);
+    streakElement.textContent = `Streak: ${streak}`;
+    return streak;
+}
+function streakLost(streak){
+    getPlayersInfo()
+        .then(e => {
+            console.log('current player', initials)
+            console.log()
+        })
+    alert('STREAK LOST!');
+    streak = 0;
+    nextRound(streak);
+    streakElement.textContent = `Streak: ${streak}`;
+    return streak
+}
+
+function nextRound(streak){
+    clearGrid();
+    createColorBoxes(9,true,streak);
+}
 
 
-function createColorBoxes(intBoxes){
+function clearGrid(){
+    const boxes = Array.from(document.querySelectorAll('.color-boxes-container div'));
+    for(let box in boxes){
+        boxes[box].remove();
+    }
+}
+
+function createColorBoxes(intBoxes,gameStart, streak=0){
 
     //create
     const colorVal = document.querySelector('.color')
     let counter = 1;
-    const boxDivs = document.querySelector('.color-boxes-container')
+   
     const colorCards = [];
     const winningID = pickWinner(intBoxes);
+    console.log('winner', winningID)
     for(let i = 1; i <= intBoxes; i++){
         const card = document.createElement('div');
         card.id = i;
@@ -28,18 +79,25 @@ function createColorBoxes(intBoxes){
         card.style.backgroundColor = `#${backgroundColor}`;
         colorCards.push(card)
     }
+
+    
     colorCards.forEach(card => {
         //add event listeners
-        if(winningID === parseInt(card.id)){ 
-            colorVal.textContent = `Guess that HEX! : ${rgbToHex(cleanRGB(card.style.backgroundColor))}`
-            card.addEventListener('click', e => {
-                alert('YOU WON!')
-            })
-        } else {
-            card.addEventListener('click', e=> {
-                alert('YOU SUCK')
-            } )
+        if(gameStart){
+            if(winningID === parseInt(card.id)){ 
+                colorVal.textContent = `Guess that HEX! : ${rgbToHex(cleanRGB(card.style.backgroundColor))}`
+                card.addEventListener('click', e => {
+                    
+                    streak = streakUp(streak)
+                    console.log('streak',streak)
+                })
+            } else {
+                card.addEventListener('click', e=> {
+                    streak = streakLost(streak);
+                } )
+            }
         }
+        
 
         //append
         if (counter <= (colorCards.length / 3)){
@@ -64,6 +122,9 @@ function createColorBoxes(intBoxes){
         counter += 1;
     })
 }
+
+
+
 function createRandomHex(){
     // color range in decimal : 0 - 16777215                    (Math.random()*16777215)
     //                            white - black
@@ -94,89 +155,54 @@ function cleanRGB(string){
     return nums;
 }
 
-function winning(user){
-    fetch(playerURL)
-        .then(response => response.json())
-        .then(e => {
-        })
-}
-
-// async function getPlayersInfo() {
-//     var response = await fetch(playerURL);
-  
-//     console.log(response.json()); // this line will "wait" for the previous to be completed
-    
-//   }
-
- getPlayersInfo() ;
-
+async function getPlayersInfo() {
+    var response = await fetch(playerURL);
+    var data = await response.json()
+    return data;
+  };
 function logIn(form){
     
     let initials = form.get('initials').toUpperCase();
-    let playerInfo = 0;
-    fetch(playerURL)
-        .then(response => response.json())
-        .then(e => {
-            playerInfo = e;
+    
+    getPlayersInfo()
+        .then(playerArray => {
+            if(findPlayer(initials,playerArray)[0]){
+                highscore.textContent = `Highscore: ${findPlayer(initials,playerArray)[3]}`
+                playerInitialsElement.textContent = `Player: ${initials}`
+            } else {
+                const playerJSON = {
+                    'initials' : findPlayer(initials,playerArray)[2],
+                    'highscore': 0,
+                    'id': findPlayer(initials,playerArray)[1]
+                }
+                const options = {
+                    method: 'post',
+                    headers: {
+                        "Content-Type" : "application/json",
+                        "Accept"       : "application/json"
+                    },
+                    body: JSON.stringify(playerJSON)
+                }
+                fetch(playerURL,options);
+                highscore.textContent = `Highscore: 0`;
+                playerInitialsElement.textContent = `Player: ${initials}`;
+            }
         })
-    console.log(playerInfo)
-
-    // fetch(playerURL)
-    //     .then(response => response.json())
-    //     .then(json => {
-    //         const player = findPlayer(initials,json)
-    //         if(player[0]){
-    //             //fetch call
-    //             const highscoreElement = document.querySelector('.highscore');
-    //             highscoreElement.textContent = `Highscore: ${json[player[1]]['highscore']}`
-    //         } else {
-    //             const playerJSON = {
-    //                 'initials' : player[1],
-    //                 'highscore': 0,
-    //                 'id': player[0]
-    //             }    
-    //             return playerJSON;
-    //         }
-    //     })
-    
- 
-
-
-
-    
-    // } else {
-            //     player.shift() //get rid of false value \ don't want that in the db
-            //     const playerJSON = {
-            //         'initials' : player[1],
-            //         'highscore': 0,
-            //         'id': player[0]
-            //     }
-
-            //     console.log(JSON.stringifyplayerJSON)
-            //     const options = {
-            //         METHOD: 'patch',
-            //         HEADERS: {
-            //             "Content-Type" : "application/json",
-            //             "Accept"       : "application/json"
-            //         },
-            //         BODY: JSON.stringify(playerJSON)
-            //     }
-            //     fetch(playerURL,options)
-
-    
 }
 
 function findPlayer(initials, json){
     const players = Object.values(json)
     let playerFound = false;
     let playerId = 0
+    let highscore = 0;
     for(let i=0; i < players.length; i++){
         if (initials === players[i]['initials']){
             playerFound = true;
             playerId = i;
+            highscore = players[i]['highscore']
             break;
         }
         playerId = i+1;
     }
-    return [playerFound,playerId,initials];
+    return [playerFound,playerId,initials,highscore];
 }

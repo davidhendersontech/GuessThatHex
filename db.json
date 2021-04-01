@@ -1,19 +1,38 @@
 {
-   "players": [
-       {
-           "initials": "MCB",
-           "highscore": 0,
-           "id" : 0
-       },
-       {
-           "initials": "MER",
-            "highscore": 69,
-            "id": 1
-       },
-       {
-        "initials": "JSJ",
-         "highscore": 420,
-         "id": 2
-        }
-   ]
+  "players": [
+    {
+      "initials": "MCB",
+      "highscore": 0,
+      "id": 0,
+      "streak": 0
+    },
+    {
+      "initials": "MER",
+      "highscore": 69,
+      "id": 1,
+      "streak": 0
+    },
+    {
+      "initials": "JSJ",
+      "highscore": 420,
+      "id": 2,
+      "streak": 0
+    },
+    {
+      "initials": "UIU",
+      "highscore": 0,
+      "id": 3
+
+    },
+    {
+      "initials": "YOU",
+      "highscore": 0,
+      "id": 4
+    },
+    {
+      "initials": "EAR",
+      "highscore": 0,
+      "id": 5
+    }
+  ]
 }
