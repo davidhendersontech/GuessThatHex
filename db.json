@@ -2,7 +2,7 @@
   "players": [
     {
       "initials": "MCB",
-      "highscore": 0,
+      "highscore": 420,
       "id": 0,
       "streak": 0
     },
@@ -14,15 +14,14 @@
     },
     {
       "initials": "JSJ",
-      "highscore": 420,
+      "highscore": 2,
       "id": 2,
       "streak": 0
     },
     {
       "initials": "UIU",
-      "highscore": 0,
+      "highscore": 6,
       "id": 3
-
     },
     {
       "initials": "YOU",
@@ -33,6 +32,36 @@
       "initials": "EAR",
       "highscore": 0,
       "id": 5
+    },
+    {
+      "initials": "GHG",
+      "highscore": 4,
+      "id": 6
+    },
+    {
+      "initials": "YUY",
+      "highscore": 0,
+      "id": 7
+    },
+    {
+      "initials": "BBB",
+      "highscore": 0,
+      "id": 8
+    },
+    {
+      "initials": "CCC",
+      "highscore": 0,
+      "id": 9
+    },
+    {
+      "initials": "CCR",
+      "highscore": 0,
+      "id": 10
+    },
+    {
+      "initials": "GIG",
+      "highscore": 1,
+      "id": 11
     }
   ]
 }

@@ -1,11 +1,14 @@
-const playerURL = 'http://localhost:3000/players'
+const playerURL = 'http://localhost:3000/players/'
 const initialsForm = document.querySelector('#form')
 const highscore = document.querySelector('.highscore');
 const playerInitialsElement = document.querySelector('.playerInitials')
 const streakElement = document.querySelector('.currentStreak');
-const boxDivs = document.querySelector('.color-boxes-container')
+const boxDivs = document.querySelector('.color-boxes-container');
+const partyButton = document.querySelector('.party');
+const colorValue = document.querySelector('.color-value');
 let currentPlayer = null;
 let playerLoggedIn = false;
+
 // createColorBoxes(9);
 createGame();
 
@@ -18,14 +21,27 @@ initialsForm.addEventListener('submit',e => {
     createGame()
 })
 
+colorValue.addEventListener('click', e => {
+    
+    
+    let array = colorValue.textContent.split('');
+    array.shift();
+    colorValue.textContent = toRGB(array);
+    
+})
+
+partyButton.addEventListener('wheel',partyMode)
+function partyMode(){
+    setInterval(nextRound(0),500)
+}
 function createGame(){
     let streak = 0;
     if (!playerLoggedIn){
         playerInitialsElement.textContent = "PLEASE LOG IN BELOW TO START";
-        createColorBoxes(9,false)
+        createColorBoxes(9,false,0)
     } else {
         clearGrid()
-        createColorBoxes(9,true)
+        createColorBoxes(9,true,0)
         
     }
 }
@@ -37,16 +53,33 @@ function streakUp(streak){
     return streak;
 }
 function streakLost(streak){
+    console.log('streak',streak);
+    const options = {
+        method : 'PATCH',
+        headers: {
+            "Content-Type" : "application/json",
+            "Accept" : "application/json"
+        },
+        body: JSON.stringify({'highscore': streak})
+        
+    }
     getPlayersInfo()
-        .then(e => {
-            console.log('current player', initials)
-            console.log()
+        .then(e => { 
+            const oldHighScore = e[currentPlayer]['highscore']
+            console.log('oldHighscore', oldHighScore)
+            if (streak > oldHighScore){
+                console.log(`${streak} > ${oldHighScore}`)
+                fetch(playerURL + currentPlayer,options)
+                    .then(highscore.textContent = `Highscore: ${streak}`)
+            }
         })
-    alert('STREAK LOST!');
-    streak = 0;
-    nextRound(streak);
-    streakElement.textContent = `Streak: ${streak}`;
-    return streak
+        .then(e => {
+            alert('STREAK LOST!');
+            streak = 0;
+            nextRound(streak);
+            streakElement.textContent = `Streak: ${streak}`;
+            return streak
+        })
 }
 
 function nextRound(streak){
@@ -62,10 +95,10 @@ function clearGrid(){
     }
 }
 
-function createColorBoxes(intBoxes,gameStart, streak=0){
+function createColorBoxes(intBoxes,gameStart, streak){
 
     //create
-    const colorVal = document.querySelector('.color')
+    const colorVal = document.querySelector('.color-value')
     let counter = 1;
    
     const colorCards = [];
@@ -85,11 +118,11 @@ function createColorBoxes(intBoxes,gameStart, streak=0){
         //add event listeners
         if(gameStart){
             if(winningID === parseInt(card.id)){ 
-                colorVal.textContent = `Guess that HEX! : ${rgbToHex(cleanRGB(card.style.backgroundColor))}`
+                colorVal.textContent = `${rgbToHex(cleanRGB(card.style.backgroundColor))}`
                 card.addEventListener('click', e => {
                     
                     streak = streakUp(streak)
-                    console.log('streak',streak)
+                    
                 })
             } else {
                 card.addEventListener('click', e=> {
@@ -123,8 +156,6 @@ function createColorBoxes(intBoxes,gameStart, streak=0){
     })
 }
 
-
-
 function createRandomHex(){
     // color range in decimal : 0 - 16777215                    (Math.random()*16777215)
     //                            white - black
@@ -135,13 +166,20 @@ function createRandomHex(){
     return randomHexColor;
 }
 function pickWinner(intBoxes){
-    const winningID = Math.floor(Math.random() * 6);
+    const winningID = Math.floor(Math.random() * intBoxes);
     return ((winningID > 1) ? winningID: winningID + 1)
 }
 
 function toHex(color){
     var hex = color.toString(16);
     return hex.length === 1 ? "0"+ hex: hex;
+}
+function toRGB(h){
+    let r=0, g=0, b=0;
+    r = "0x" + h[0] + h[1];
+    g = "0x" + h[2] + h[3];
+    b = "0x" + h[4] + h[5];
+    return "rgb("+ +r + "," + +g + "," + +b + ")";
 }
 
 function rgbToHex(numberArray){
@@ -167,8 +205,10 @@ function logIn(form){
     getPlayersInfo()
         .then(playerArray => {
             if(findPlayer(initials,playerArray)[0]){
-                highscore.textContent = `Highscore: ${findPlayer(initials,playerArray)[3]}`
-                playerInitialsElement.textContent = `Player: ${initials}`
+                highscore.textContent = `Highscore: ${findPlayer(initials,playerArray)[3]}`;
+                playerInitialsElement.textContent = `Player: ${initials}`;
+                currentPlayer = findPlayer(initials,playerArray)[1];
+                
             } else {
                 const playerJSON = {
                     'initials' : findPlayer(initials,playerArray)[2],

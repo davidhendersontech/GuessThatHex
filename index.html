@@ -7,18 +7,22 @@
     <script src="index.js" defer></script>
     <link rel="stylesheet" href='base.css'/>
     <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Oswald" />
     <title>Guess that Hex!</title>
 </head>
 <body>
     <nav id='navbar'>
-        <h1 class='color'>GUESS THE COLORS!</h1>
+        <h1 class='color'>GUESS THAT HEX!</h1>
+        <h1 class='color-value'></h1>
         <h2 class='playerInitials'></h2>
         <h2 class='highscore'></h2>
         <h2 class='currentStreak'></h2>
         <form id='form'>
-            <input type="text" for='initials' name='initials' placeholder="Enter your initials" maxlength="3">
+            <input type="text" for='initials' name='initials' placeholder="Enter initials" maxlength="3">
             <button type="submit" > Login </button>
         </form>
+        
+        <a class='party'href='highscores.html'>Highscores</a>
     </nav>
     
     <div class="color-boxes-container">
